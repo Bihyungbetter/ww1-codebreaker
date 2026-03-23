@@ -230,6 +230,175 @@ const Game = (() => {
         }
     ];
 
+    // ----- TYPEWRITER AUDIO -----
+    let audioCtx = null;
+    function playCarriageReturn() {
+        if (!audioCtx) {
+            try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
+        }
+        const t = audioCtx.currentTime;
+        // Bell ding
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2200, t);
+        gain.gain.setValueAtTime(0.04, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.15);
+    }
+
+    function playKeystroke() {
+        if (!audioCtx) {
+            try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
+        }
+        const t = audioCtx.currentTime;
+        // Short percussive click
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(800 + Math.random() * 600, t);
+        osc.frequency.exponentialRampToValueAtTime(200, t + 0.02);
+
+        filter.type = 'bandpass';
+        filter.frequency.value = 1200 + Math.random() * 400;
+        filter.Q.value = 0.5;
+
+        gain.gain.setValueAtTime(0.06 + Math.random() * 0.02, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(t);
+        osc.stop(t + 0.05);
+    }
+
+    // ----- TYPEWRITER ENGINE -----
+    let typewriterQueue = [];
+    let typewriterRunning = false;
+
+    function typewrite(element, html, speed = 18, callback = null) {
+        // Parse HTML to extract text and tags
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const plainText = temp.textContent || temp.innerText;
+
+        element.innerHTML = '';
+        element.style.minHeight = element.offsetHeight + 'px';
+
+        // Create a cursor element
+        const cursor = document.createElement('span');
+        cursor.className = 'typewriter-cursor on-paper';
+
+        let i = 0;
+        let htmlIndex = 0;
+        let outputHtml = '';
+        let insideTag = false;
+
+        // We'll type the raw HTML character by character, but skip through tags instantly
+        const rawHtml = html;
+
+        function typeNext() {
+            if (htmlIndex >= rawHtml.length) {
+                // Done typing
+                element.innerHTML = rawHtml;
+                if (callback) callback();
+                return;
+            }
+
+            // If we hit a tag, consume it all at once
+            if (rawHtml[htmlIndex] === '<') {
+                const closeIdx = rawHtml.indexOf('>', htmlIndex);
+                if (closeIdx !== -1) {
+                    const tag = rawHtml.substring(htmlIndex, closeIdx + 1);
+                    outputHtml += tag;
+                    htmlIndex = closeIdx + 1;
+                    element.innerHTML = outputHtml;
+                    element.appendChild(cursor);
+                    // Play carriage return sound on line breaks
+                    if (tag.toLowerCase() === '<br>' || tag.toLowerCase() === '<br/>') {
+                        playCarriageReturn();
+                        setTimeout(typeNext, speed * 6);
+                        return;
+                    }
+                    typeNext();
+                    return;
+                }
+            }
+
+            // Type one visible character
+            const char = rawHtml[htmlIndex];
+            if (char !== ' ') playKeystroke();
+            // Randomly add ink variation
+            const rand = Math.random();
+            if (rand < 0.08) {
+                outputHtml += `<span class="ink-heavy">${char}</span>`;
+            } else if (rand < 0.14) {
+                outputHtml += `<span class="ink-light-char">${char}</span>`;
+            } else {
+                outputHtml += char;
+            }
+            htmlIndex++;
+
+            element.innerHTML = outputHtml;
+            element.appendChild(cursor);
+
+            // Vary speed for realism
+            let delay = speed;
+            if (char === '.' || char === '!' || char === '?') delay = speed * 8;
+            else if (char === ',') delay = speed * 4;
+            else if (char === ' ') delay = speed * 1.5;
+            else delay = speed + (Math.random() * speed * 0.8);
+
+            setTimeout(typeNext, delay);
+        }
+
+        element.appendChild(cursor);
+        setTimeout(typeNext, 300);
+    }
+
+    // Typewriter for dark backgrounds
+    function typewriteDark(element, text, speed = 18, callback = null) {
+        element.innerHTML = '';
+
+        const cursor = document.createElement('span');
+        cursor.className = 'typewriter-cursor on-dark';
+
+        let i = 0;
+        let output = '';
+
+        function typeNext() {
+            if (i >= text.length) {
+                element.textContent = text;
+                if (callback) callback();
+                return;
+            }
+
+            const char = text[i];
+            output += char;
+            i++;
+
+            element.textContent = output;
+            element.appendChild(cursor);
+
+            let delay = speed;
+            if (char === '.' || char === '?') delay = speed * 8;
+            else if (char === ',') delay = speed * 4;
+            else delay = speed + (Math.random() * speed * 0.8);
+
+            setTimeout(typeNext, delay);
+        }
+
+        element.appendChild(cursor);
+        setTimeout(typeNext, 200);
+    }
+
     // ----- SCREEN MANAGEMENT -----
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -532,8 +701,8 @@ const Game = (() => {
         document.getElementById('result-stamp').textContent = success ? 'MISSION COMPLETE' : 'MISSION FAILED';
         document.getElementById('result-stamp').className = 'result-stamp ' + (success ? 'success' : 'failure');
         document.getElementById('result-title').textContent = result.title;
-        document.getElementById('result-text').textContent = result.text;
-        document.getElementById('history-text').textContent = result.history;
+        document.getElementById('result-text').textContent = '';
+        document.getElementById('history-text').textContent = '';
 
         const btnNext = document.getElementById('btn-next');
         if (currentLevel < levels.length - 1) {
@@ -543,6 +712,22 @@ const Game = (() => {
         }
 
         showScreen('result');
+
+        // Typewriter the result text, then the history text
+        setTimeout(() => {
+            typewrite(
+                document.getElementById('result-text'),
+                result.text,
+                12,
+                () => {
+                    typewrite(
+                        document.getElementById('history-text'),
+                        result.history,
+                        10
+                    );
+                }
+            );
+        }, 600);
     }
 
     // ----- HINTS -----
@@ -571,9 +756,17 @@ const Game = (() => {
             const level = levels[currentLevel];
             document.getElementById('briefing-title').textContent = level.briefing.title;
             document.getElementById('briefing-date').textContent = level.briefing.date;
-            document.getElementById('briefing-text').innerHTML = level.briefing.text;
+            document.getElementById('briefing-text').innerHTML = '';
             document.getElementById('briefing-objective').textContent = level.briefing.objective;
             showScreen('briefing');
+            // Start typewriter on briefing text
+            setTimeout(() => {
+                typewrite(
+                    document.getElementById('briefing-text'),
+                    level.briefing.text,
+                    14
+                );
+            }, 400);
         },
 
         startLevel() {
@@ -630,6 +823,18 @@ const Game = (() => {
         }
     };
 
+    // ----- TITLE SCREEN TYPEWRITER ON LOAD -----
+    document.addEventListener('DOMContentLoaded', () => {
+        const introEl = document.querySelector('.intro-text');
+        if (introEl) {
+            const originalText = introEl.textContent;
+            introEl.textContent = '';
+            setTimeout(() => {
+                typewrite(introEl, originalText, 20);
+            }, 600);
+        }
+    });
+
     function showFinalScreen() {
         const statsEl = document.getElementById('final-stats-list');
         const successes = results.filter(r => r.success).length;
@@ -647,16 +852,22 @@ const Game = (() => {
         }).join('');
 
         const msgEl = document.getElementById('final-message');
+        let finalMsg = '';
         if (successes === 3) {
-            msgEl.innerHTML = "Outstanding, cryptanalyst. You have successfully completed all three missions. Your work in Room 40, French Intelligence, and the Meuse-Argonne front helped secure Allied victory. The war ends on November 11, 1918 — and the codebreakers played a role history will never forget.";
+            finalMsg = "Outstanding, cryptanalyst. You have successfully completed all three missions. Your work in Room 40, French Intelligence, and the Meuse-Argonne front helped secure Allied victory. The war ends on November 11, 1918 — and the codebreakers played a role history will never forget.";
         } else if (successes >= 2) {
-            msgEl.innerHTML = "Well done. Your codebreaking skills made a significant impact on the war effort, though not every mission succeeded. The Great War has ended, but the lessons of cryptography will echo through the century to come.";
+            finalMsg = "Well done. Your codebreaking skills made a significant impact on the war effort, though not every mission succeeded. The Great War has ended, but the lessons of cryptography will echo through the century to come.";
         } else if (successes === 1) {
-            msgEl.innerHTML = "The war has been a difficult one for Allied intelligence. Only one mission was completed successfully. The cost of failed cryptanalysis is measured in lives lost and opportunities missed.";
+            finalMsg = "The war has been a difficult one for Allied intelligence. Only one mission was completed successfully. The cost of failed cryptanalysis is measured in lives lost and opportunities missed.";
         } else {
-            msgEl.innerHTML = "Allied intelligence has failed at every turn. Without the codebreakers' successes, the war drags on longer and costs more lives. History might have unfolded very differently.";
+            finalMsg = "Allied intelligence has failed at every turn. Without the codebreakers' successes, the war drags on longer and costs more lives. History might have unfolded very differently.";
         }
 
+        msgEl.textContent = '';
         showScreen('final');
+
+        setTimeout(() => {
+            typewrite(msgEl, finalMsg, 14);
+        }, 800);
     }
 })();
