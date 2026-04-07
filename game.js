@@ -135,13 +135,13 @@ const Game = (() => {
             // Col R(2): F A G G V F
             // Col T(4): D F X V F A
             // Col Z(5): A X D F G V
-            ciphertext: "ADDDVF AFFGAV FAGGVF DFXVFA AXDFGV",
+            ciphertext: "ADDDFG AFFGVF FAGGVF DFXAAV AXDVFA",
             transpositionColumns: {
-                'F': 'ADDDVF',
+                'F': 'ADDDFG',
                 'R': 'FAGGVF',
-                'I': 'AFFGAV',
-                'T': 'DFXVFA',
-                'Z': 'AXDFGV'
+                'I': 'AFFGVF',
+                'T': 'DFXAAV',
+                'Z': 'AXDVFA'
             },
             answer: "ATTACKCOMPIEGNE",
             acceptableAnswers: ["ATTACKCOMPIEGNE", "ATTACK COMPIEGNE", "ATTACK ON COMPIEGNE"],
@@ -195,12 +195,12 @@ const Game = (() => {
             // Dictionary entries (includes correct terms + distractors)
             dictionary: [
                 { choctaw: "Tanap chito",    english: "Artillery (big gun)" },
-                { choctaw: "Tanap ushi",     english: "Machine gun (little gun shoot fast)" },
+                { choctaw: "Tanap ushi",     english: "Machine guns (little gun shoot fast)" },
                 { choctaw: "Tanchi tohbi",   english: "Second Battalion (white corn)" },
                 { choctaw: "Tanchi lakna",   english: "First Battalion (yellow corn)" },
                 { choctaw: "Tanchi humma",   english: "Third Battalion (red corn)" },
                 { choctaw: "Hattak tushka",  english: "Soldiers (warriors)" },
-                { choctaw: "Okla i kana",    english: "Enemy positions (their places)" },
+                { choctaw: "okla i kana",    english: "enemy positions (their places)" },
                 { choctaw: "Tiak humma",     english: "Ammunition (red earth)" },
                 { choctaw: "Iti fabussa",    english: "Grenades (stones)" },
                 { choctaw: "Nan ithana",     english: "Scouts (learners)" },
