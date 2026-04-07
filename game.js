@@ -135,11 +135,11 @@ const Game = (() => {
             // Col R(2): F A G G V F
             // Col T(4): D F X V F A
             // Col Z(5): A X D F G V
-            ciphertext: "ADDDVF AFFAAV FAGGVF DFXVFA AXDFGV",
+            ciphertext: "ADDDVF AFFGAV FAGGVF DFXVFA AXDFGV",
             transpositionColumns: {
                 'F': 'ADDDVF',
                 'R': 'FAGGVF',
-                'I': 'AFFAAV',
+                'I': 'AFFGAV',
                 'T': 'DFXVFA',
                 'Z': 'AXDFGV'
             },
