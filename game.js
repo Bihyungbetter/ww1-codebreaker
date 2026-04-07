@@ -195,12 +195,12 @@ const Game = (() => {
             // Dictionary entries (includes correct terms + distractors)
             dictionary: [
                 { choctaw: "Tanap chito",    english: "Artillery (big gun)" },
-                { choctaw: "Tanap ushi",     english: "Machine gun (little gun shoot fast)" },
+                { choctaw: "Tanap ushi",     english: "Machine guns (little gun shoot fast)" },
                 { choctaw: "Tanchi tohbi",   english: "Second Battalion (white corn)" },
                 { choctaw: "Tanchi lakna",   english: "First Battalion (yellow corn)" },
                 { choctaw: "Tanchi humma",   english: "Third Battalion (red corn)" },
                 { choctaw: "Hattak tushka",  english: "Soldiers (warriors)" },
-                { choctaw: "Okla i kana",    english: "enemy positions (their places)" },
+                { choctaw: "okla i kana",    english: "enemy positions (their places)" },
                 { choctaw: "Tiak humma",     english: "Ammunition (red earth)" },
                 { choctaw: "Iti fabussa",    english: "Grenades (stones)" },
                 { choctaw: "Nan ithana",     english: "Scouts (learners)" },
