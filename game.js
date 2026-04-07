@@ -200,7 +200,7 @@ const Game = (() => {
                 { choctaw: "Tanchi lakna",   english: "First Battalion (yellow corn)" },
                 { choctaw: "Tanchi humma",   english: "Third Battalion (red corn)" },
                 { choctaw: "Hattak tushka",  english: "Soldiers (warriors)" },
-                { choctaw: "Okla i kana",    english: "Enemy positions (their places)" },
+                { choctaw: "Okla i kana",    english: "enemy positions (their places)" },
                 { choctaw: "Tiak humma",     english: "Ammunition (red earth)" },
                 { choctaw: "Iti fabussa",    english: "Grenades (stones)" },
                 { choctaw: "Nan ithana",     english: "Scouts (learners)" },
