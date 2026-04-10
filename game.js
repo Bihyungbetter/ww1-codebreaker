@@ -1,5 +1,5 @@
 // ============================================================
-//  THE CODEBREAKERS — WWI Cryptography Game
+//  THE CODEBREAKERS: A WWI Cryptography Game
 //  By Michael Lu & Michael Zhang
 // ============================================================
 
@@ -90,7 +90,7 @@ const Game = (() => {
             briefing: {
                 title: "Mission II: The ADFGVX Cipher",
                 date: "June 1, 1918",
-                text: `German forces have launched a massive spring offensive. Our radio operators have intercepted a field message encrypted with the new German ADFGVX cipher. This a fiendishly complex system that combines a Polybius square substitution with columnar transposition.<br><br>French cryptanalyst Lieutenant Georges Painvin has spent months studying this cipher and has determined the key components. He has identified the Polybius square arrangement and the transposition keyword used for this message.<br><br>You must apply his method to decrypt the intercepted message. Intelligence suggests it contains the target of the next German attack.`,
+                text: `German forces have launched a massive spring offensive. Our radio operators have intercepted a field message encrypted with the new German ADFGVX cipher. This is an incredibly complex system that combines a Polybius square substitution with columnar transposition.<br><br>French cryptanalyst Lieutenant Georges Painvin has spent months studying this cipher and has determined the key components. He has identified the Polybius square arrangement and the transposition keyword used for this message.<br><br>You must apply his method to decrypt the intercepted message. Intelligence suggests it contains the target of the next German attack.`,
                 objective: "Use the provided Polybius square and transposition keyword to decrypt the ADFGVX cipher text. The decrypted message will reveal the location of the next German offensive."
             },
             hints: [
